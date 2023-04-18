@@ -1,32 +1,40 @@
-import { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { findPersonajesThunk } from "../../actions/personajeActions";
-import "./filtros.css";
+import {ChangeEvent, FC} from 'react';
 
-const Filtros = () => {
+import {
+    TypedUseSelectorHook, useDispatch, useSelector as useReduxSelector, } from 'react-redux';
+import { filtrarPersonajesThunk } from '../../actions/personajesActions';
+import { IRootState } from "../../store/store";
+import './filtros.css';
+
+/**
+ *
+ *
+ * @returns {React.ReactElement} JSX element
+ */
+
+const Filtros: FC = () => {
+    const useSelector: TypedUseSelectorHook<IRootState> = useReduxSelector;
+  const query = useSelector((state) => state.personajes.query);
     const dispatch = useDispatch();
 
-    const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const searchValue = event.target.value;
-        dispatch(findPersonajesThunk(searchValue, 1));
-    };
+    const onChange = async (e: ChangeEvent<HTMLInputElement>) => {
+        let query = e.target.value;
+        dispatch(filtrarPersonajesThunk(query));
+      };
 
-    useEffect(() => {
-        dispatch(findPersonajesThunk("", 1));
-    }, [dispatch]);
-
-    return (
-        <div className="filtros">
-            <label htmlFor="nombre">Filtrar por nombre:</label>
-            <input
-                type="text"
-                placeholder="Rick, Morty, Beth, Alien, ...etc"
-                name="nombre"
-                onChange={handleChange}
-            />
-        </div>
+    return(
+         <div className="filtros">
+        <label htmlFor="nombre">Filtrar por nombre:</label>
+        <input 
+            type="text" 
+            onChange={onChange}
+            placeholder="Rick, Morty, Beth, Alien, ...etc"
+            value={query}
+            name="nombre" 
+            autoFocus={true} 
+        />
+    </div>
     );
 };
-
 
 export default Filtros;

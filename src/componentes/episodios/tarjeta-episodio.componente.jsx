@@ -1,5 +1,3 @@
-// import React, { useEffect, useState } from "react";
-
 import './tarjeta-episodio.css';
 
 /**
@@ -10,14 +8,15 @@ import './tarjeta-episodio.css';
  * 
  * @returns un JSX element 
  */
-const TarjetaEpisodio = ({ arrayEpisodios }) => (
-    <div className="tarjeta-episodio">
-        <h4>{arrayEpisodios.name}</h4>
-        <div>
-            <span>{arrayEpisodios.episode}</span>
-            <span>Lanzado el: {arrayEpisodios.air_date}</span>
-        </div>
+const TarjetaEpisodio = () => {
+
+    return <div className="tarjeta-episodio">
+            <h4>Close Rick-counters of the Rick Kind</h4>
+            <div>
+                <span>S01E01</span>
+                <span>Lanzado el: April 7, 2014</span>
+            </div>
     </div>
-);
+}
 
 export default TarjetaEpisodio;

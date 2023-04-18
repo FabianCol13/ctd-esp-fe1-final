@@ -1,55 +1,40 @@
-
-import { FC, useState, useCallback } from "react";
-import { Link } from "react-router-dom";
 import BotonFavorito from '../botones/boton-favorito.componente';
 import './tarjeta-personaje.css';
-import { Personaje } from "../../types/type";
-import { useDispatch } from "react-redux";
-import {
-    deleteFavoritoPersonaje,
-    addFavoritoPersonajeAction,
-    findPersonajeByIdThunk
-} from "../../actions/personajeActions";
+import { useNavigate } from "react-router-dom";
+import { FC } from "react";
+import Personaje from "../../types/personaje.types";
+
+/**
+ * Tarjeta para cada personaje dentro de la grilla de personajes. 
+ * 
+ * Deberás agregar las propiedades necesarias para mostrar los datos de los personajes
+ * 
+ * 
+ * @param {Personaje} personaje
+ * @returns {React.ReactElement} JSX element
+ */
 
 
-interface TarjetaPersonajeProps {
-    personaje: Personaje;
-    favoritos: Personaje[];
-};
 
-const TarjetaPersonaje: FC<TarjetaPersonajeProps> = ({ personaje, favoritos }) => {
-    const dispatch = useDispatch();
+const TarjetaPersonaje: FC<{personaje: Personaje}> = ({personaje}) => {
+    let navigate = useNavigate();
 
-    const [favoritoState, setFavoritoState] = useState(!!favoritos.find(element => element.id === personaje.id));
-
-    const handleFavoritoClick = useCallback(() => {
-        if (favoritos.find(element => element.id === personaje.id)) {
-            dispatch(deleteFavoritoPersonaje(personaje));
-            setFavoritoState(false);
-        } else {
-            dispatch(addFavoritoPersonajeAction(personaje));
-            setFavoritoState(true);
-        }
-    }, [dispatch, favoritos, personaje]);
-
-    const handleClick = useCallback(() => {
-        dispatch(findPersonajeByIdThunk(personaje.id));
-    }, [dispatch, personaje.id]);
-
+  
+    const redirigirPaginaDetalles = () => {
+        navigate(`/detalle/${personaje.id}`, { state: { personaje: personaje } });
+      };
     return (
-        <div className="tarjeta-personaje">
-            <Link to="/detalle" onClick={handleClick}>
-                <img src={personaje.image} alt={personaje.name} />
-            </Link>
-            <div className="tarjeta-personaje-body">
-                <Link to="/detalle" onClick={handleClick}>
-                    <span>{personaje.name}</span>
-                </Link>
-                <div onClick={handleFavoritoClick}>
-                    <BotonFavorito esFavorito={favoritoState} />
-                </div>
-            </div>
+         <div className="tarjeta-personaje">
+        <img
+        src={personaje.image}
+        onClick={redirigirPaginaDetalles}
+        alt={personaje.name}
+          />
+        <div className="tarjeta-personaje-body">
+            <span>{personaje.name}</span>
+            <BotonFavorito personaje={personaje} />
         </div>
+    </div>
     );
 };
 

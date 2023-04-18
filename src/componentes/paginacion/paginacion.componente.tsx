@@ -1,48 +1,54 @@
-import { useDispatch } from 'react-redux';
-
-import { useSelector } from '../../store/personajeStore';
-import './paginacion.css';
-import { findPersonajesThunk } from '../../actions/personajeActions';
+import "./paginacion.css";
+import { FC } from "react";
+import {
+  TypedUseSelectorHook,
+  useDispatch,
+  useSelector as useReduxSelector,
+} from "react-redux";
+import { cambiarPaginaThunk } from "../../actions/personajesActions";
+import { IRootState } from "../../store/store";
 
 /**
  * Componente que contiene los botones para paginar
- * 
+ *
  * Deberás agregar las propiedades necesarias para que funcione correctamente
- * 
- * 
- * @returns un JSX element 
+ *
+ *
+ * @returns {React.ReactElement} JSX element
  */
-const Paginacion = () => {
-    const dispatch = useDispatch();
-    const { busqueda, currentPage, totalPages } = useSelector(
-        (state) => state.personaje
-    );
+const Paginacion: FC = () => {
+  const useSelector: TypedUseSelectorHook<IRootState> = useReduxSelector;
+  const dispatch = useDispatch();
 
-    const handleButtonClick = (event: React.MouseEvent<HTMLButtonElement>) => {
-        const buttonText = event.currentTarget.innerText;
-        const newPage =
-            buttonText === "Anterior" ? currentPage - 1 : currentPage + 1;
-        dispatch(findPersonajesThunk(busqueda, newPage));
-    };
+  const pageInfo = useSelector((state) => state.personajes.paginaInfo);
+  const { next, prev } = pageInfo;
 
-    return (
-        <div className="paginacion">
-            <button
-                className="primary"
-                onClick={handleButtonClick}
-                disabled={currentPage === 1}
-            >
-                Anterior
-            </button>
-            <button
-                className="primary"
-                onClick={handleButtonClick}
-                disabled={currentPage === totalPages}
-            >
-                Siguiente
-            </button>
-        </div>
-    );
+  const paginaAnterior = () => {
+    dispatch(cambiarPaginaThunk(prev));
+  };
+
+  const siguientePagina = () => {
+    dispatch(cambiarPaginaThunk(next));
+  };
+
+  return (
+    <div className="paginacion">
+      <button
+        onClick={paginaAnterior}
+        disabled={prev === null ? true : false}
+        className={"primary"}
+      >
+        Anterior
+      </button>
+      <button
+        onClick={siguientePagina}
+        disabled={next === null ? true : false}
+        className={"primary"}
+      >
+        Siguiente
+      </button>
+    </div>
+  );
 };
 
 export default Paginacion;
