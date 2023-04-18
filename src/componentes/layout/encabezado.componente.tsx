@@ -3,17 +3,17 @@ import './encabezado.css';
 
 /**
  * Encabezado que contiene los links para navegar entre las páginas
- *
+ * @author Fabian Garcia
  * Uso: `<Encabezado />`
  *
  * @returns {JSX.Element}
  */
-const Encabezado = () => {
+const Encabezado = ():JSX.Element => {
 
     return <header>
             <div>
                 <div>
-                    <h2>Examen Final de Frontend IV Eliana Zamora Sanabria C1</h2>
+                    <h2>Examen Final de Frontend IV</h2>
                 </div>
                 <nav>
                     <ul>

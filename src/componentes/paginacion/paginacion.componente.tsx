@@ -1,48 +1,42 @@
 import "./paginacion.css";
-import { FC } from "react";
 import {
   TypedUseSelectorHook,
-  useDispatch,
   useSelector as useReduxSelector,
+  useDispatch,
 } from "react-redux";
-import { cambiarPaginaThunk } from "../../actions/personajesActions";
 import { IRootState } from "../../store/store";
+import { buscarPersonajesThunk } from "../../actions/personajesActions";
 
+export const useSelector: TypedUseSelectorHook<IRootState> = useReduxSelector;
 /**
  * Componente que contiene los botones para paginar
- *
- * Deberás agregar las propiedades necesarias para que funcione correctamente
- *
- *
- * @returns {React.ReactElement} JSX element
+ * @author Fabian Garcia
+ * @returns {JSX.Element}
  */
-const Paginacion: FC = () => {
-  const useSelector: TypedUseSelectorHook<IRootState> = useReduxSelector;
+const Paginacion = (): JSX.Element => {
+  const { apiInfo } = useSelector((state) => state.personajes);
   const dispatch = useDispatch();
 
-  const pageInfo = useSelector((state) => state.personajes.paginaInfo);
-  const { next, prev } = pageInfo;
+  const prev = apiInfo ? apiInfo?.prev : "";
+  const prevContent = prev !== null ? prev.split("?")[1] : "";
+  const prevPage = () => dispatch(buscarPersonajesThunk(prevContent));
 
-  const paginaAnterior = () => {
-    dispatch(cambiarPaginaThunk(prev));
-  };
-
-  const siguientePagina = () => {
-    dispatch(cambiarPaginaThunk(next));
-  };
+  const next = apiInfo ? apiInfo.next : "";
+  const nextContent = next !== null ? next.split("?")[1] : "";
+  const nextPage = () => dispatch(buscarPersonajesThunk(nextContent));
 
   return (
     <div className="paginacion">
       <button
-        onClick={paginaAnterior}
         disabled={prev === null ? true : false}
+        onClick={prevPage}
         className={"primary"}
       >
         Anterior
       </button>
       <button
-        onClick={siguientePagina}
         disabled={next === null ? true : false}
+        onClick={nextPage}
         className={"primary"}
       >
         Siguiente

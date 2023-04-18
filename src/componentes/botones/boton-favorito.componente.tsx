@@ -1,47 +1,24 @@
-import { FC } from "react";
-import { IRootState } from "../../store/store";
-import Personaje from "../../types/personaje.types";
-import { toggleFavorito } from "../../actions/favoritosAction";
-import "./boton-favorito.css";
-import {
-  TypedUseSelectorHook,
-  useDispatch,
-  useSelector as useReduxSelector,
-} from "react-redux";
+import './boton-favorito.css';
 /**
- * 
- * 
- * Deberás tipar las propiedades si usas este componente
- * 
- * 
- * @param {Personaje} personaje
- * @returns {React.ReactElement} JSX element
+ * Boton que indica si un elemento es favorito o no, y da 
+ * la posibilidad de marcarlo/desmarcarlo
+ * @author Fabian Garcia
+ * @param {boolean} esFavorito
+ * @param {Function} onClick  
+ * @returns {JSX.Element}
  */
 
+type BotonProps = {
+    esFavorito:boolean;
+    onClick:any;
+}
 
-const BotonFavorito: FC<{personaje: Personaje}> = ({personaje}) => {
-    const useSelector: TypedUseSelectorHook<IRootState> = useReduxSelector;
-  const favoritoMap = useSelector((state) => state.favoritos.favoritosMapa);
-  const dispatch = useDispatch();
+const BotonFavorito = ({esFavorito, onClick}:BotonProps): JSX.Element => {
+    const src = esFavorito ? "/imagenes/star-filled.png" : "/imagenes/star.png"
 
-  const src = require(favoritoMap.has(personaje.id)
-  ? "../../Assets/star-filled.png"
-  : "../../Assets/star.png");
-
-/**
- * 
- * @param {event} event
- */
-const toggleFavoritos = (event: React.MouseEvent<HTMLElement>) => {
-  event.preventDefault();
-  dispatch(toggleFavorito(personaje));
-};
-
-return (
-  <button className="button-favorite" onClick={toggleFavoritos} type="button">
-    <img src={src} alt={"favorito"} />
-  </button>
-);
-};
+    return <div className="boton-favorito">
+        <img src={src} alt={"favorito"} onClick={onClick} />
+    </div>
+}
 
 export default BotonFavorito;

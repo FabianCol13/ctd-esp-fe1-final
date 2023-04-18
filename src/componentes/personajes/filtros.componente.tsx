@@ -1,40 +1,46 @@
-import {ChangeEvent, FC} from 'react';
-
+import "./filtros.css";
+import { FC, useEffect } from "react";
+import { useDispatch } from "react-redux";
 import {
-    TypedUseSelectorHook, useDispatch, useSelector as useReduxSelector, } from 'react-redux';
-import { filtrarPersonajesThunk } from '../../actions/personajesActions';
-import { IRootState } from "../../store/store";
-import './filtros.css';
+  buscarPersonajesThunk,
+  filtrarPersonajes,
+} from "../../actions/personajesActions";
+import { useSelector } from "./grilla-personajes.componente";
 
 /**
- *
- *
- * @returns {React.ReactElement} JSX element
+ * Componente que renderiza el input para buscar los personajes al escribir el nombre
+ * @author Fabian Garcia
+ * @returns JSX.Element
  */
+const Filtros: FC = (): JSX.Element => {
+  const dispatch = useDispatch();
+  const { busqueda } = useSelector((state) => state.personajes);
 
-const Filtros: FC = () => {
-    const useSelector: TypedUseSelectorHook<IRootState> = useReduxSelector;
-  const query = useSelector((state) => state.personajes.query);
-    const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(buscarPersonajesThunk());
+  }, []);
 
-    const onChange = async (e: ChangeEvent<HTMLInputElement>) => {
-        let query = e.target.value;
-        dispatch(filtrarPersonajesThunk(query));
-      };
+  /**
+   * Funcion que despacha 2 acciones cuando se cambia un valor en el input
+   * @param {Event} e
+   */
+  const handlerChange = (e: any) => {
+    dispatch(buscarPersonajesThunk(e.target.value));
+    dispatch(filtrarPersonajes(e.target.value));
+  };
 
-    return(
-         <div className="filtros">
-        <label htmlFor="nombre">Filtrar por nombre:</label>
-        <input 
-            type="text" 
-            onChange={onChange}
-            placeholder="Rick, Morty, Beth, Alien, ...etc"
-            value={query}
-            name="nombre" 
-            autoFocus={true} 
-        />
+  return (
+    <div className="filtros">
+      <label htmlFor="nombre">Filtrar por nombre:</label>
+      <input
+        value={busqueda}
+        type="text"
+        placeholder="Rick, Morty, Beth, Alien, ...etc"
+        name="nombre"
+        onChange={(e) => handlerChange(e)}
+      />
     </div>
-    );
+  );
 };
 
 export default Filtros;

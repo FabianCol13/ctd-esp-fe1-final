@@ -1,62 +1,72 @@
 import { Reducer } from "@reduxjs/toolkit";
-import { PersonajeActions } from "../actions/personajesActions";
+import { PersonajesAction } from "../actions/personajesActions";
 import Personaje from "../types/personaje.types";
-import PaginaInfo from "../types/infoPagina.types";
 
 export interface PersonajesState {
-  status: "IDLE" | "LOADING" | "COMPLETED" | "FAILED";
+  busqueda: string;
   personajes: Personaje[];
-  query: string;
-  paginaInfo: PaginaInfo;
-  error: string | number | null;
+  status: "CARGANDO" | "COMPLETADO" | "COMPLETADO_CON_ERROR";
+  error: string | null;
+  apiInfo: {
+    count: number;
+    next: string;
+    pages: number;
+    prev: string;
+  };
 }
 
 const initialState: PersonajesState = {
-  status: "IDLE",
+  busqueda: "",
   personajes: [],
-  query: "",
-  paginaInfo: { count: 0, pages: 0, next: "", prev: "" },
+  status: "COMPLETADO",
   error: null,
+  apiInfo: {
+    count: 0,
+    next: "",
+    pages: 0,
+    prev: "",
+  },
 };
 
-/**
- * personajes reducer
- *
- * @param {State} state
- * @param {DataStore.Reducer<PersonajesState, PersonajeActions>} action
- *
- * @returns {State}
- */
-
-const personajesReducer: Reducer<PersonajesState, PersonajeActions> = (
+// componente
+const personajesReducer: Reducer<PersonajesState, PersonajesAction> = (
   state = initialState,
   action
 ): PersonajesState => {
   switch (action.type) {
+    case "BUSCAR_PERSONAJES":
+      return {
+        ...state,
+        status: "CARGANDO",
+        error: null,
+      };
+    case "BUSCAR_PERSONAJES_EXITO":
+      return {
+        ...state,
+        status: "COMPLETADO",
+        personajes: action.data.results,
+        apiInfo: action.data.info,
+      };
+    case "BUSCAR_PERSONAJES_ERROR":
+      return {
+        ...state,
+        status: "COMPLETADO_CON_ERROR",
+        personajes: [], //opcional
+        error: action.error,
+      };
+    case "LIMPIAR_FILTRO":
+      return {
+        ...state,
+        busqueda: "",
+      };
     case "FILTRAR_PERSONAJES":
       return {
         ...state,
-        status: "LOADING",
-        personajes: [],
-        query: action.query,
-        error: null,
-      };
-    case "FILTRAR_PERSONAJES_SUCCESS":
-      return {
-        ...state,
-        status: "COMPLETED",
-        personajes: action.personajes,
-        paginaInfo: action.paginaInfo,
-      };
-    case "FILTRAR_PERSONAJES_ERROR":
-      return {
-        ...state,
-        status: "FAILED",
-        personajes: [],
-        error: action.mensaje,
+        busqueda: action.name,
       };
     default:
-      return { ...state };
+      return state;
   }
 };
+
 export default personajesReducer;

@@ -1,40 +1,39 @@
 import { Reducer } from "@reduxjs/toolkit";
-import { FavoritoActions } from "../actions/favoritosAction";
+import { FavoritosAction } from "../actions/personajesfavoritosActions";
 import Personaje from "../types/personaje.types";
 
-interface StateFavoritos {
-  favoritosMapa: Map<number, Personaje>;
+export interface FavoritosState {
+  favoritos: Personaje[];
 }
 
-const initialState: StateFavoritos = {
-  favoritosMapa: new Map(),
+const initialState: FavoritosState = {
+  favoritos: [],
 };
 
-const favoritosReducer: Reducer<StateFavoritos, FavoritoActions> = (
+const favoritosReducer: Reducer<FavoritosState, FavoritosAction> = (
   state = initialState,
   action
-): StateFavoritos => {
+): FavoritosState => {
   switch (action.type) {
-    case "TOGGLE_FAVORITO":
-      const map = new Map<number, Personaje>();
-      state.favoritosMapa.forEach((personaje) => {
-        map.set(personaje.id, personaje);
-      });
-
-      state.favoritosMapa.has(action.personaje.id)
-        ? map.delete(action.personaje.id)
-        : map.set(action.personaje.id, action.personaje);
+    case "AGREGAR_FAVORITO":
       return {
         ...state,
-        favoritosMapa: map,
+        favoritos: [...state.favoritos, action.personaje],
       };
-
-    case "REMOVE_ALL_FAVORITO":
+    case "SACAR_FAVORITO":
       return {
-        ...initialState,
+        ...state,
+        favoritos: state.favoritos.filter(
+          (favorito: Personaje) => favorito.id !== action.personaje.id
+        ),
+      };
+    case "SACAR_TODOS_LOS_FAVORITOS":
+      return {
+        ...state,
+        favoritos: [],
       };
     default:
-      return { ...state };
+      return state;
   }
 };
 

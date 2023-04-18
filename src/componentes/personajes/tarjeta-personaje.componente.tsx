@@ -1,41 +1,48 @@
-import BotonFavorito from '../botones/boton-favorito.componente';
-import './tarjeta-personaje.css';
-import { useNavigate } from "react-router-dom";
-import { FC } from "react";
+import BotonFavorito from "../botones/boton-favorito.componente";
+import "./tarjeta-personaje.css";
 import Personaje from "../../types/personaje.types";
+import { useSelector } from "./grilla-personajes.componente";
+import {
+  agregarFavorito,
+  sacarFavorito,
+} from "../../actions/personajesfavoritosActions";
+import { useDispatch } from "react-redux";
 
 /**
- * Tarjeta para cada personaje dentro de la grilla de personajes. 
- * 
- * Deberás agregar las propiedades necesarias para mostrar los datos de los personajes
- * 
- * 
+ * Componente que renderiza la tarjeta para cada personaje dentro de la grilla de personajes.
+ * @author Fabian Garcia
  * @param {Personaje} personaje
- * @returns {React.ReactElement} JSX element
+ * @returns {JSX.Element}
  */
 
+const TarjetaPersonaje = ({ name, image, id }: Personaje): JSX.Element => {
+  const dispatch = useDispatch();
 
+  const favoritos = useSelector((state) => state.personajesFavoritos.favoritos);
+  let esFavorito = favoritos.some((favorito) => favorito.id === id);
 
-const TarjetaPersonaje: FC<{personaje: Personaje}> = ({personaje}) => {
-    let navigate = useNavigate();
+  /**
+   * Función que al clickear el boton se ejecuta,
+   * marcando como favorito al personaje en el caso de que no lo sea y viceversa
+   * @author Fabian Garcia
+   */
+  const handleClick = () => {
+    if (!esFavorito) {
+      dispatch(agregarFavorito({ id, name, image }));
+    } else {
+      dispatch(sacarFavorito({ id, name, image }));
+    }
+  };
 
-  
-    const redirigirPaginaDetalles = () => {
-        navigate(`/detalle/${personaje.id}`, { state: { personaje: personaje } });
-      };
-    return (
-         <div className="tarjeta-personaje">
-        <img
-        src={personaje.image}
-        onClick={redirigirPaginaDetalles}
-        alt={personaje.name}
-          />
-        <div className="tarjeta-personaje-body">
-            <span>{personaje.name}</span>
-            <BotonFavorito personaje={personaje} />
-        </div>
+  return (
+    <div className="tarjeta-personaje" key={"personaje_" + id}>
+      <img src={image} alt={name} />
+      <div className="tarjeta-personaje-body">
+        <span>{name}</span>
+        <BotonFavorito esFavorito={esFavorito} onClick={handleClick} />
+      </div>
     </div>
-    );
+  );
 };
 
 export default TarjetaPersonaje;

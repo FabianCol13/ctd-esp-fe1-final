@@ -1,91 +1,39 @@
 import "./Detalle.css";
 import BotonFavorito from "../componentes/botones/boton-favorito.componente";
 import TarjetaEpisodio from "../componentes/episodios/tarjeta-episodio.componente";
-import { FC, useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import {
-  TypedUseSelectorHook,
-  useDispatch,
-  useSelector as useReduxSelector,
-} from "react-redux";
-import { IRootState } from "../store/store";
-import Episodio from "../types/episodio.types";
-import { obtenerEpisodiosThunk } from "../actions/episodiosActions";
-import Personaje from "../types/personaje.types";
 
 /**
  * Esta es la pagina de detalle. Aqui se puede mostrar la vista sobre el personaje seleccionado junto con la lista de episodios en los que aparece
- *
+ * 
  * EL TRABAJO SOBRE ESTE ARCHIVO ES OPCIONAL Y NO ES REQUISITO DE APROBACION
- *
- *
- *
- * Uso:
+ * 
+ * Uso: 
  * ``` <PaginaDetalle /> ```
- *
- * @returns {React.ReactElement} JSX element
+ * 
+ * @returns la pagina de detalle
  */
-const PaginaDetalle: FC = () => {
-  const useSelector: TypedUseSelectorHook<IRootState> = useReduxSelector;
-  const { episodios, status } = useSelector((state) => state.episodios);
-  const dispatch = useDispatch();
+const PaginaDetalle = ():any => {
+    return <div className="container">
+        <h3>Rick Sanchez</h3>
+        <div className={"detalle"}>
+            <div className={"detalle-header"}>
+                <img src="https://rickandmortyapi.com/api/character/avatar/1.jpeg" alt="Rick Sanchez"/>
+                <div className={"detalle-header-texto"}>
 
-  const location = useLocation();
-  const state: any = location.state;
-  const personaje: Personaje = { ...state.personaje };
-
-  const [episodioId, setEpisodioId] = useState<(string | undefined)[]>([]);
-
-  useEffect(() => {
-    /**
-     *  Array de episodios ID
-     */
-    const array: (string | undefined)[] = personaje.episode.map((episodio) => {
-      return episodio.split("/").at(-1);
-    });
-    setEpisodioId(array);
-  }, [personaje.episode]);
-
-  useEffect(() => {
-    dispatch(obtenerEpisodiosThunk(episodioId));
-  }, [dispatch, episodioId]);
-
-  return (
-    <div className="container">
-      <h3>{personaje.name}</h3>
-      <div className={"detalle"}>
-        <div className={"detalle-header"}>
-          <img src={personaje.image} alt={personaje.name} />
-          <div className={"detalle-header-texto"}>
-            <p>{personaje.name}</p>
-            <p>Planeta: {personaje.origin.name}</p>
-            <p>Genero: {personaje.gender}</p>
-          </div>
-          <BotonFavorito personaje={personaje} />
+                    <p>Rick Sanchez</p>
+                    <p>Planeta: Earth</p>
+                    <p>Genero: Male</p>
+                </div>
+                <BotonFavorito esFavorito={false} onClick={null}/>
+            </div>
         </div>
-      </div>
-      <h4>Lista de episodios donde apareció el personaje</h4>
-      <div className={"episodios-grilla"}>
-        {status === "LOADING" ? (
-          <div>Cargando personajes...</div>
-        ) : status === "FAILED" ? (
-          <div>No se pudo cargar los personajes.</div>
-        ) : !episodios ? (
-          <></>
-        ) : Array.isArray(episodios) ? (
-          episodios.map((episodio: Episodio) => {
-            return (
-              <div key={`episodio_${episodio.id}_${personaje?.name}`}>
-                <TarjetaEpisodio episodio={episodio} />
-              </div>
-            );
-          })
-        ) : (
-          <TarjetaEpisodio episodio={episodios} />
-        )}
-      </div>
+        <h4>Lista de episodios donde apareció el personaje</h4>
+        <div className={"episodios-grilla"}>
+            <TarjetaEpisodio />
+            <TarjetaEpisodio />
+            <TarjetaEpisodio />
+        </div>
     </div>
-  );
-};
+}
 
-export default PaginaDetalle;
+export default PaginaDetalle
